@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">LienzoPaintAndroid</string>
+
+    <string-array name="tools_array">
+        <item>Pincel</item>
+        <item>Borrador (forma completa)</item>
+        <item>Círculo</item>
+        <item>Rectángulo</item>
+        <item>Texto</item>
+        <item>Mover Figura</item>
+        <item>Seleccionar</item>
+    </string-array>
+
+</resources>

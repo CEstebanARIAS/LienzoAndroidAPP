@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+
+    tools:context=".MainActivity">
+
+    <Spinner
+        android:id="@+id/spinnerTools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/toolBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="#EBEBEB"
+        android:padding="6dp"
+        >
+
+        <ImageButton
+            android:id="@+id/imgBtnLapiz"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="5dp"
+            android:src="@drawable/pencil"
+            android:background="@drawable/borde_seleccion"
+            android:scaleType="centerInside"
+            android:contentDescription="@string/app_name"
+            android:tooltipText="Dibujo Libre"/>
+
+        <ImageButton
+            android:id="@+id/imgBtnCirculo"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="5dp"
+            android:src="@drawable/circle"
+            android:background="@drawable/borde_seleccion"
+            android:scaleType="centerInside"
+            android:tooltipText="Circulo"/>
+
+        <ImageButton
+            android:id="@+id/imgBtnLineaFlecha"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="5dp"
+            android:src="@drawable/linea"
+            android:background="@drawable/borde_seleccion"
+            android:scaleType="centerInside"
+            android:tooltipText="Circulo"/>
+
+        <ImageButton
+            android:id="@+id/imgBtnTexto"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="5dp"
+            android:src="@drawable/text"
+            android:background="@drawable/borde_seleccion"
+            android:scaleType="centerInside"
+            android:tooltipText="Agregar Texto"/>
+        <ImageButton
+            android:id="@+id/imgBtnMover"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="5dp"
+            android:src="@drawable/move"
+            android:background="@drawable/borde_seleccion"
+            android:scaleType="centerInside"
+            android:tooltipText="Mover Elemento"/>
+
+        <ImageButton
+            android:id="@+id/imgBtnBorrar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="5dp"
+            android:src="@drawable/eraser"
+            android:background="@drawable/borde_seleccion"
+            android:scaleType="centerInside"
+            android:contentDescription="@string/app_name"
+            android:tooltipText="Borrador"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/toolSubBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="#EEEEEE"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/imgBtnLinea"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="5dp"
+            android:src="@drawable/linea"
+            android:background="@drawable/borde_seleccion"
+            android:scaleType="centerInside"
+            android:contentDescription="@string/app_name"
+            android:tooltipText="Dibujo Libre"/>
+
+        <ImageButton
+            android:id="@+id/imgBtnFlecha"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="5dp"
+            android:src="@drawable/arroy"
+            android:background="@drawable/borde_seleccion"
+            android:scaleType="centerInside"
+            android:tooltipText="Circulo"/>
+
+    </LinearLayout>
+
+    <jdc.esteban.lienzopaintandroid.PaintView
+        android:id="@+id/paintView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>
