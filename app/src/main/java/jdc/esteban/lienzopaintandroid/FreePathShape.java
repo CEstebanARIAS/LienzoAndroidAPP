@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.view.MotionEvent;
 
 public class FreePathShape implements DrawShape {
 
@@ -25,6 +26,8 @@ public class FreePathShape implements DrawShape {
 
     @Override
     public boolean contains(float x, float y) {
+        RectF touchBounds = new RectF(bounds);
+        touchBounds.inset(-20, -20); // margen táctil
         return bounds.contains(x, y);
     }
 
@@ -38,5 +41,6 @@ public class FreePathShape implements DrawShape {
     public void drawHighlight(Canvas canvas, Paint paint) {
         canvas.drawRect(bounds, paint);
     }
+
 
 }

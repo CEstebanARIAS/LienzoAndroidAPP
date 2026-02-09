@@ -2,11 +2,13 @@ package jdc.esteban.lienzopaintandroid;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.view.MotionEvent;
 
 public class CircleShape implements DrawShape{
 
     private float cx, cy, radius;
     private Paint paint;
+    private static final float HANDLE_RADIUS = 20f;
 
     public CircleShape(float cx, float cy, float radius, Paint paint) {
         this.cx = cx;
@@ -24,7 +26,7 @@ public class CircleShape implements DrawShape{
     public boolean contains(float x, float y){
         float dx = x - cx;
         float dy = y - cy;
-        return (dx * dy + dy * dy) <= (radius * radius);
+        return (dx * dx + dy * dy) <= (radius * radius);
     }
 
     @Override
@@ -33,9 +35,21 @@ public class CircleShape implements DrawShape{
         cy += dy;
     }
 
-    @Override
-    public void drawHighlight(Canvas canvas, Paint paint) {
-        canvas.drawCircle(cx, cy, radius + 5, paint);
+    public boolean isOnResizeHandle(float x, float y) {
+        return Math.hypot(x - (cx + radius), y - cy) <= HANDLE_RADIUS;
     }
 
+    public void resize(float x, float y) {
+        radius = Math.max(20, (float) Math.hypot(x - cx, y - cy));
+    }
+
+
+    @Override
+    public void drawHighlight(Canvas canvas, Paint paint) {
+        canvas.drawCircle(cx, cy, radius, paint);
+
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawCircle(cx + radius, cy, HANDLE_RADIUS, paint);
+        paint.setStyle(Paint.Style.STROKE);
+    }
 }

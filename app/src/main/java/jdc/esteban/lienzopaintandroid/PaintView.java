@@ -24,6 +24,12 @@ public class PaintView extends View {
     public enum TipoLinea{
         FLECHA, LINEARECTA
     }
+    private enum ResizeMode { NONE, CIRCLE, LINE_START, LINE_END }
+    private ResizeMode resizeMode = ResizeMode.NONE;
+    private Paint anglePaint;
+    private float magnifierWindowX;
+    private float magnifierWindowY;
+
 
     private Tool currentTool = Tool.PEN;
 
@@ -39,6 +45,7 @@ public class PaintView extends View {
     private TipoLinea currentTipoLinea = TipoLinea.LINEARECTA;
     private boolean isPreviewingLine = false;
     private Magnifier magnifier;
+    private boolean resizing = false;
 
 
 
@@ -65,6 +72,13 @@ public class PaintView extends View {
         gridPaint.setStrokeWidth(1f);
         gridPaint.setStyle(Paint.Style.STROKE);
 
+        /// Define el angulo en las lineas (lineaRecta/ flecha)
+        anglePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        anglePaint.setColor(Color.DKGRAY);
+        anglePaint.setTextSize(32f);
+        anglePaint.setStyle(Paint.Style.FILL);
+
+
         /// Define el color tamaño y demas propiedades de los objetos creados
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(colorModoOscuroClaroTelefono());
@@ -80,6 +94,15 @@ public class PaintView extends View {
 
         for (DrawShape s: shapes) {
             s.draw(canvas);
+        }
+
+        // Dibuja los angulos en las lineas y lo que herede de las lineas
+        for (DrawShape s : shapes) {
+            s.draw(canvas);
+
+            if (s == selectedShape && s instanceof LineShape) {
+                ((LineShape) s).drawAngle(canvas, anglePaint);
+            }
         }
 
         if (currentPath != null){
@@ -145,7 +168,7 @@ public class PaintView extends View {
                 handleText(event, x, y);
                 break;
             case MOVE:
-                return handleMove(event, x, y);
+               return handleMove(event, x, y);
 
         }
 
@@ -228,33 +251,68 @@ public class PaintView extends View {
     }
 
     private boolean handleMove(MotionEvent event, float x, float y) {
+        if (currentTool == Tool.MOVE) {
 
-        switch (event.getAction()) {
+            switch (event.getAction()) {
 
-            case MotionEvent.ACTION_DOWN:
-                selectedShape = findShapeAt(x, y);
-                lastX = x;
-                lastY = y;
-
-                return selectedShape != null;
-
-            case MotionEvent.ACTION_MOVE:
-                if (selectedShape != null) {
-                    float dx = x - lastX;
-                    float dy = y - lastY;
-                    selectedShape.moveBy(dx, dy);
+                case MotionEvent.ACTION_DOWN:
+                    selectedShape = findShapeAt(x, y);
                     lastX = x;
                     lastY = y;
+                    resizeMode = ResizeMode.NONE;
+                    if (selectedShape instanceof CircleShape) {
+                        if (((CircleShape) selectedShape).isOnResizeHandle(x, y)) {
+                            resizeMode = ResizeMode.CIRCLE;
+                        }
+                    }
+
+                    if (selectedShape instanceof LineShape) {
+                        LineShape line = (LineShape) selectedShape;
+
+                        if (line.isOnStartHandle(x, y)) {
+                            resizeMode = ResizeMode.LINE_START;
+                        } else if (line.isOnEndHandle(x, y)) {
+                            resizeMode = ResizeMode.LINE_END;
+                        }
+                    }
+
+
+                    invalidate();
+                    return selectedShape != null;
+
+                case MotionEvent.ACTION_MOVE:
+                    if (selectedShape == null) return false;
+
+                    if (resizeMode == ResizeMode.CIRCLE && selectedShape instanceof CircleShape) {
+                        ((CircleShape) selectedShape).resize(x, y);
+
+                    } else if (resizeMode == ResizeMode.LINE_START && selectedShape instanceof LineShape) {
+                        showMagnifier(x, y);
+                        ((LineShape) selectedShape).resizeStart(x, y);
+
+                    } else if (resizeMode == ResizeMode.LINE_END && selectedShape instanceof LineShape) {
+                        showMagnifier(x, y);
+                        ((LineShape) selectedShape).resizeEnd(x, y);
+
+                    } else {
+                        float dx = x - lastX;
+                        float dy = y - lastY;
+                        selectedShape.moveBy(dx, dy);
+                        lastX = x;
+                        lastY = y;
+                    }
+
+
                     invalidate();
                     return true;
-                }
-                break;
 
-            case MotionEvent.ACTION_UP:
-                selectedShape = null;
-                return true;
+                case MotionEvent.ACTION_UP:
+                    resizeMode = ResizeMode.NONE;
+                    hideMagnifier();
+                    selectedShape = null;
+                    return true;
+            }
         }
-
         return false;
     }
 
@@ -399,8 +457,8 @@ public class PaintView extends View {
                 magnifier.show(
                         x,
                         y,
-                        x,
-                        y - 300 // aparece encima del dedo
+                        magnifierWindowX,
+                        magnifierWindowY  // aparece estatico en la pantalla
                 );
             }
         }
@@ -411,6 +469,17 @@ public class PaintView extends View {
         if (magnifier != null && android.os.Build.VERSION.SDK_INT >= 28) {
             magnifier.dismiss();
         }
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+
+        // Margen desde el borde
+        float margin = 40f;
+
+        magnifierWindowX = w - margin;
+        magnifierWindowY = margin;
     }
 
 
